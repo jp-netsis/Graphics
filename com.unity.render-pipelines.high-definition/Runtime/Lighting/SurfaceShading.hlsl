@@ -27,6 +27,39 @@ bool ShouldEvaluateThickObjectTransmission(float3 V, float3 L, PreLightData preL
 }
 #endif
 
+#if SHADEROPTIONS_QUALITY_LITE && defined(HAS_PENNER)
+SHADOW_TYPE SharpenShadowForPreIntegratedSSS(SHADOW_TYPE shadow, float sharpening)
+{
+    // We use smoothstep as an approximation of the shadow falloff
+    float falloff = InverseSmoothstep01(shadow.r);
+    falloff = saturate(falloff * sharpening);
+    return Smoothstep01(falloff);
+}
+
+float3 IntegrateShadowScattering(DirectionalLightData light, SHADOW_TYPE shadow, float penumbraWidth, float3 shapeParam, int steps, int limit = 256)
+{
+	float inc = 2.0f * limit / (float)steps;
+
+    float shadowRemapped = InverseSmoothstep01(shadow.r);
+    shadowRemapped = saturate(shadowRemapped * _Area);
+
+	float3 totalWeights = 0.0f;
+	float3 totalLight = 0.0f;
+	for (float i = -limit; i <= limit; i += inc)
+	{
+        float x = (i / limit) * penumbraWidth;
+        SHADOW_TYPE falloff = Smoothstep01(saturate(shadowRemapped + x));
+        float3 light = ComputeShadowColor(falloff, light.shadowTint, light.penumbraTint);
+        float dist = abs(x);
+		float3 weights = EvalBurleyDiffusionProfile(dist, shapeParam);
+
+		totalWeights += weights;
+		totalLight += light * weights;
+	}
+	return saturate(totalLight / totalWeights);
+}
+#endif
+
 DirectLighting ShadeSurface_Infinitesimal(PreLightData preLightData, BSDFData bsdfData,
                                           float3 V, float3 L, float3 lightColor,
                                           float diffuseDimmer, float specularDimmer)
@@ -95,7 +128,16 @@ DirectLighting ShadeSurface_Directional(LightLoopContext lightLoopContext,
             SHADOW_TYPE shadow = EvaluateShadow_Directional(lightLoopContext, posInput, light, builtinData, GetNormalForShadowBias(bsdfData));
             float NdotL  = dot(bsdfData.normalWS, L); // No microshadowing when facing away from light (use for thin transmission as well)
             shadow *= NdotL >= 0.0 ? ComputeMicroShadowing(GetAmbientOcclusionForMicroShadowing(bsdfData), NdotL, _MicroShadowOpacity) : 1.0;
-            lightColor.rgb *= ComputeShadowColor(shadow, light.shadowTint, light.penumbraTint);
+#if SHADEROPTIONS_QUALITY_LITE && defined(HAS_PENNER)
+            if (HasFlag(bsdfData.materialFeatures, MATERIALFEATUREFLAGS_LIT_SUBSURFACE_SCATTERING) && _EnableSubsurfaceScattering)
+                shadow = SharpenShadowForPreIntegratedSSS(shadow, _Area);
+#endif
+            float3 shadowColor = ComputeShadowColor(shadow, light.shadowTint, light.penumbraTint);
+#if SHADEROPTIONS_QUALITY_LITE && defined(HAS_PENNER)
+            if (HasFlag(bsdfData.materialFeatures, MATERIALFEATUREFLAGS_LIT_SUBSURFACE_SCATTERING) && _EnableSubsurfaceScattering)
+                shadowColor = IntegrateShadowScattering(light, shadow, _Blur, bsdfData.shapeParam, 20);
+#endif
+            lightColor.rgb *= shadowColor;
 
 #ifdef LIGHT_EVALUATION_SPLINE_SHADOW_VISIBILITY_SAMPLE
             if ((light.shadowIndex >= 0))
