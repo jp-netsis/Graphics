@@ -123,10 +123,11 @@ namespace UnityEngine.Rendering.HighDefinition
 
         #region Water Material
         /// <summary>
-        /// Sets the material that is used to render the water surface. If set to None a default material is used.
+        /// Sets a custom material that will be used to render the water surface. If set to None a default material is used.
         /// </summary>
-        [Tooltip("Sets the material that is used to render the water surface. If set to None a default material is used.")]
-        public Material material = null;
+        [Tooltip("Sets a custom material that will be used to render the water surface. If set to None a default material is used.")]
+        public Material customMaterial = null;
+
         /// <summary>
         /// Controls the smoothness used to render the water surface.
         /// </summary>
@@ -296,22 +297,22 @@ namespace UnityEngine.Rendering.HighDefinition
 
         #region Water Foam
         /// <summary>
-        /// Controls the simulation foam smoothness.
-        /// </summary>
-        [Tooltip("Controls the surface foam smoothness.")]
-        public float simulationFoamSmoothness = 0.3f;
-
-        /// <summary>
-        /// Controls the simulation foam brightness.
-        /// </summary>
-        [Tooltip("Controls the simulation foam brightness.")]
-        public float simulationFoamIntensity = 0.5f;
-
-        /// <summary>
         /// Controls the simulation foam amount. Higher values generate larger foam patches. Foam presence is highly dependent on the wind speed and chopiness values.
         /// </summary>
         [Tooltip("Controls the simulation foam amount. Higher values generate larger foam patches. Foam presence is highly dependent on the wind speed and chopiness values.")]
         public float simulationFoamAmount = 0.5f;
+
+        /// <summary>
+        /// Controls the simulation foam drag.
+        /// </summary>
+        [Tooltip("Controls the simulation foam drag.")]
+        public float simulationFoamDrag = 0.5f;
+
+        /// <summary>
+        /// Controls the simulation foam smoothness.
+        /// </summary>
+        [Tooltip("Controls the surface foam smoothness.")]
+        public float simulationFoamSmoothness = 0.3f;
 
         /// <summary>
         /// Controls the simulation foam tiling.

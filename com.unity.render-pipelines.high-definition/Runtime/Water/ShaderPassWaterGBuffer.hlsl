@@ -123,7 +123,7 @@ void Frag(PackedVaryingsToPS packedInput,
     builtinData.renderingLayers = DEFAULT_LIGHT_LAYERS;
 
     // We manually set the ambient probe as this is not a mesh renderer
-    builtinData.bakeDiffuseLighting = _WaterAmbientProbe;
+    builtinData.bakeDiffuseLighting = _WaterAmbientProbe.xyz;
 
     // Compute the BSDF Data
     BSDFData bsdfData = ConvertSurfaceDataToBSDFData(input.positionSS.xy, surfaceData);

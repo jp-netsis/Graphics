@@ -25,7 +25,6 @@ namespace UnityEditor.Rendering
             waterSurface.windAffectCurrent = 0.2f;
             waterSurface.causticsIntensity = 0.0f;
             waterSurface.simulationFoamTiling = 10.0f;
-            waterSurface.simulationFoamIntensity = 1.0f;
         }
 
         [MenuItem("GameObject/Water Surface/River", priority = CoreUtils.Priorities.gameObjectMenuPriority)]
@@ -51,7 +50,6 @@ namespace UnityEditor.Rendering
             waterSurface.maxRefractionDistance = 1.0f;
             waterSurface.maxAbsorptionDistance = 1.0f;
             waterSurface.scatteringColor = new Color(0.0f, 0.3f, 0.25f);
-            waterSurface.simulationFoamIntensity = 0.0f;
             waterSurface.windSpeed = 30.0f;
             waterSurface.causticsIntensity = 0.1f;
             waterSurface.causticsTiling = 0.8f;
@@ -91,9 +89,6 @@ namespace UnityEditor.Rendering
 
             // No choppiness for the water
             waterSurface.choppiness = 0.0f;
-
-            // Pools have no foam
-            waterSurface.simulationFoamIntensity = 0.0f;
 
             // Wind is quite light on rivers
             waterSurface.windSpeed = 50.0f;

@@ -51,8 +51,8 @@ namespace UnityEngine.Rendering.HighDefinition
 
         // Smoothness of the simulation foam
         public float _SimulationFoamSmoothness;
-        // Intensity of the simulation foam
-        public float _SimulationFoamIntensity;
+        // Controls the amount of drag of the simulation foam
+        public float _JacobianDrag;
         // Amount of surface foam
         public float _SimulationFoamAmount;
         // TODO WRITE
@@ -89,7 +89,7 @@ namespace UnityEngine.Rendering.HighDefinition
         public float _OutScatteringCoefficient;
         public float _FoamSmoothness;
         public float _HeightBasedScattering;
-        public float _PaddingW0;
+        public float _WindSpeedMultiplier;
 
         public Vector4 _FoamJacobianLambda;
     }

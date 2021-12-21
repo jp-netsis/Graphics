@@ -170,7 +170,7 @@ namespace UnityEngine.Rendering.HighDefinition
         // Number of bands when the water is rendered at low band count
         const int k_WaterLowBandCount = 2;
         // Minimal size that a patch can reach (in meters)
-        const float k_MinPatchSize = 10.0f;
+        const float k_MinPatchSize = 5.0f;
         // Minimal quad resolution when rendering a water patch
         const int k_WaterMinGridSize = 2;
 
@@ -451,11 +451,12 @@ namespace UnityEngine.Rendering.HighDefinition
 
             // Manually set wind by the user
             cb._WindSpeed = currentWater.simulation.patchWindSpeed;
+            cb._WindSpeedMultiplier = currentWater.windSpeed / 100.0f;
 
             // Foam data
+            cb._SimulationFoamAmount = 10.0f * Mathf.Pow(0.7f + currentWater.simulationFoamAmount * 0.3f, 0.25f);
+            cb._JacobianDrag = currentWater.simulationFoamDrag == 0.0f ? 0.0f : Mathf.Lerp(0.96f, 0.991f, currentWater.simulationFoamDrag);
             cb._SimulationFoamSmoothness = currentWater.simulationFoamSmoothness;
-            cb._SimulationFoamIntensity = currentWater.simulationFoamIntensity * currentWater.simulationFoamIntensity;
-            cb._SimulationFoamAmount = Mathf.Sqrt(currentWater.simulationFoamAmount);
             cb._FoamTilling = currentWater.simulationFoamTiling;
             float foamSpeed = currentWater.simulation.simulationTime * Mathf.Sqrt(cb._WindSpeed.x * k_PhillipsGravityConstant) * currentWater.windAffectCurrent;
             cb._FoamOffsets = new Vector2(cb._WindDirection.x * foamSpeed * 0.5f, cb._WindDirection.y * foamSpeed * 0.5f);
@@ -704,7 +705,7 @@ namespace UnityEngine.Rendering.HighDefinition
             parameters.foamMask = currentWater.foamMask != null ? currentWater.foamMask : Texture2D.whiteTexture;
 
             // Water material
-            parameters.waterMaterial = currentWater.material != null ? currentWater.material : m_InternalWaterMaterial;
+            parameters.waterMaterial = currentWater.customMaterial != null ? currentWater.customMaterial : m_InternalWaterMaterial;
 
             // Property bloc used for binding the textures
             parameters.mbp = m_WaterMaterialPropertyBlock;

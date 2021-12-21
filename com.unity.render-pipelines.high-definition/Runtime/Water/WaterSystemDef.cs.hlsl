@@ -32,7 +32,7 @@ CBUFFER_START(ShaderVariablesWater)
     float _Choppiness;
     float _DeltaTime;
     float _SimulationFoamSmoothness;
-    float _SimulationFoamIntensity;
+    float _JacobianDrag;
     float _SimulationFoamAmount;
     float _SSSMaskCoefficient;
     float _DispersionAmount;
@@ -53,7 +53,7 @@ CBUFFER_START(ShaderVariablesWater)
     float _OutScatteringCoefficient;
     float _FoamSmoothness;
     float _HeightBasedScattering;
-    float _PaddingW0;
+    float _WindSpeedMultiplier;
     float4 _FoamJacobianLambda;
 CBUFFER_END
 

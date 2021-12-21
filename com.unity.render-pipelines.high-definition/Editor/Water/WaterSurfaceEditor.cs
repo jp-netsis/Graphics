@@ -21,7 +21,7 @@ namespace UnityEditor.Rendering.HighDefinition
         SerializedProperty m_TimeMultiplier;
 
         // Rendering parameters
-        SerializedProperty m_Material;
+        SerializedProperty m_CustomMaterial;
         SerializedProperty m_WaterSmoothness;
 
         // Refraction parameters
@@ -58,8 +58,8 @@ namespace UnityEditor.Rendering.HighDefinition
         SerializedProperty m_WaterMaskOffset;
 
         // Foam
-        SerializedProperty m_SimulationFoamIntensity;
         SerializedProperty m_SimulationFoamAmount;
+        SerializedProperty m_SimulationFoamDrag;
         SerializedProperty m_SimulationFoamSmoothness;
         SerializedProperty m_SimulationFoamTiling;
         SerializedProperty m_FoamMask;
@@ -94,7 +94,7 @@ namespace UnityEditor.Rendering.HighDefinition
             m_TimeMultiplier = o.Find(x => x.timeMultiplier);
 
             // Rendering parameters
-            m_Material = o.Find(x => x.material);
+            m_CustomMaterial = o.Find(x => x.customMaterial);
             m_WaterSmoothness = o.Find(x => x.waterSmoothness);
 
             // Refraction parameters
@@ -127,8 +127,8 @@ namespace UnityEditor.Rendering.HighDefinition
             m_CausticsPlaneBlendDistance = o.Find(x => x.causticsPlaneBlendDistance);
 
             // Foam
-            m_SimulationFoamIntensity = o.Find(x => x.simulationFoamIntensity);
             m_SimulationFoamAmount = o.Find(x => x.simulationFoamAmount);
+            m_SimulationFoamDrag = o.Find(x => x.simulationFoamDrag);
             m_SimulationFoamSmoothness = o.Find(x => x.simulationFoamSmoothness);
             m_SimulationFoamTiling = o.Find(x => x.simulationFoamTiling);
             m_FoamMask = o.Find(x => x.foamMask);
@@ -169,6 +169,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
         static public readonly GUIContent k_SimulationFoamSmoothness = EditorGUIUtility.TrTextContent("Simulation Foam Smoothness", "Controls the simulation foam smoothness.");
         static public readonly GUIContent k_SimulationFoamIntensity = EditorGUIUtility.TrTextContent("Simulation Foam Intensity", "Controls the simulation foam brightness.");
+        static public readonly GUIContent k_SimulationFoamDrag = EditorGUIUtility.TrTextContent("Simulation Foam Drag", "Controls the simulation foam drag.");
         static public readonly GUIContent k_SimulationFoamAmount = EditorGUIUtility.TrTextContent("Simulation Foam Amount", "Controls the simulation foam amount. Higher values generate larger foam patches. Foam presence is highly dependent on the wind speed and chopiness values.");
 
         static public readonly GUIContent k_WindSpeed = EditorGUIUtility.TrTextContent("Wind Speed", "Controls the wind speed in kilometers per hour.");
@@ -253,7 +254,7 @@ namespace UnityEditor.Rendering.HighDefinition
             EditorGUILayout.LabelField("Material", EditorStyles.boldLabel);
             using (new IndentLevelScope())
             {
-                EditorGUILayout.PropertyField(m_Material);
+                EditorGUILayout.PropertyField(m_CustomMaterial);
                 // Water Smoothness from 0.0f to 0.99f
                 m_WaterSmoothness.floatValue = EditorGUILayout.Slider(k_WaterSmoothness, m_WaterSmoothness.floatValue, 0.0f, 0.99f);
             }
@@ -334,7 +335,7 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 // Surface foam
                 m_SimulationFoamAmount.floatValue = EditorGUILayout.Slider(k_SimulationFoamAmount, m_SimulationFoamAmount.floatValue, 0.0f, 1.0f);
-                m_SimulationFoamIntensity.floatValue = EditorGUILayout.Slider(k_SimulationFoamIntensity, m_SimulationFoamIntensity.floatValue, 0.0f, 1.0f);
+                m_SimulationFoamDrag.floatValue = EditorGUILayout.Slider(k_SimulationFoamDrag, m_SimulationFoamDrag.floatValue, 0.0f, 1.0f);
                 m_SimulationFoamSmoothness.floatValue = EditorGUILayout.Slider(k_SimulationFoamSmoothness, m_SimulationFoamSmoothness.floatValue, 0.0f, 1.0f);
                 EditorGUILayout.PropertyField(m_SimulationFoamTiling);
                 m_SimulationFoamTiling.floatValue = Mathf.Max(m_SimulationFoamTiling.floatValue, 0.01f);
