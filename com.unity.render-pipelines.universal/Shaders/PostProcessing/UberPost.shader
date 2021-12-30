@@ -121,6 +121,7 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
             float2 uvDistorted = DistortUV(uv);
 
             half3 color = (0.0).xxx;
+            half alpha = SAMPLE_TEXTURE2D_X(_SourceTex, sampler_LinearClamp, uvDistorted).a;
 
             #if _CHROMATIC_ABERRATION
             {
@@ -169,6 +170,7 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
 
                 bloom.xyz *= BloomIntensity;
                 color += bloom.xyz * BloomTint;
+                alpha += (color.r + color.g + color.b) / 3;
 
                 #if defined(BLOOM_DIRT)
                 {
@@ -179,6 +181,7 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
                     half3 dirt = SAMPLE_TEXTURE2D(_LensDirt_Texture, sampler_LinearClamp, uvDistorted * LensDirtScale + LensDirtOffset).xyz;
                     dirt *= LensDirtIntensity;
                     color += dirt * bloom.xyz;
+                    alpha += (color.r + color.g + color.b) / 3;
                 }
                 #endif
             }
@@ -230,7 +233,9 @@ Shader "Hidden/Universal Render Pipeline/UberPost"
             }
             #endif
 
-            return half4(color, 1.0);
+            alpha = clamp(alpha, 0 ,1);
+            
+            return half4(color,alpha);
         }
 
     ENDHLSL
